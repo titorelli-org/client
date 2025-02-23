@@ -1,7 +1,7 @@
 {
   "name": "@titorelli/client",
   "description": "A titorelli antispam client",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,7 @@
     "build": "tsup"
   },
   "author": "YChebotaev",
-  "license": "GPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "axios": "^1.6.1",
     "axios-oauth-client": "^2.2.0"
