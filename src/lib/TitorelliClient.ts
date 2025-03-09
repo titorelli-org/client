@@ -4,6 +4,7 @@ import type { Prediction, UnlabeledExample, LabeledExample, AuthenticationResult
 import { DuplicateClient } from './DuplicateClient'
 import { CasClient } from './CasClient'
 import { TotemsClient } from './Totems'
+import { BotsClient } from './BotsClient'
 
 export type TitorelliClientConfig = {
   serviceUrl: string
@@ -26,6 +27,7 @@ export class TitorelliClient {
   public readonly duplicate: DuplicateClient
   public readonly cas: CasClient
   public readonly totems: TotemsClient
+  public readonly bots: BotsClient
 
   constructor({ serviceUrl, clientId, clientSecret, scope, modelId }: TitorelliClientConfig) {
     if (!serviceUrl) throw new Error('serviceUrl must be provided')
@@ -65,6 +67,11 @@ export class TitorelliClient {
       () => this.ready,
       () => this.modelId,
       this.hasGrantedModelScope
+    )
+    this.bots = new BotsClient(
+      () => this.axios,
+      () => this.ready,
+      this.hasGrantedGlobalScope
     )
 
     this.axios = axios.create({ baseURL: serviceUrl })
