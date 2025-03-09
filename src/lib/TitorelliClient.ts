@@ -14,6 +14,16 @@ export type TitorelliClientConfig = {
   scope?: string | string[]
 }
 
+const globalScopes = [
+  'cas/predict',
+  'cas/train',
+  'bots/create',
+  'bots/list',
+  'bots/update',
+  'bots/read',
+  'bots/remove',
+]
+
 export class TitorelliClient {
   private ready: Promise<void>
   private axios: AxiosInstance
@@ -42,10 +52,7 @@ export class TitorelliClient {
     this.requestedScopes = []
       .concat(scope)
       .map(scope => {
-        if (scope === 'cas/train')
-          return scope
-
-        if (scope === 'cas/predict')
+        if (globalScopes.includes(scope))
           return scope
 
         return `${this.modelId}/${scope}`
