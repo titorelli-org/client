@@ -1,44 +1,38 @@
-import { AxiosInstance } from "axios";
-import type { CasPrediction, LabeledExample } from "../../types";
+import axios, { type AxiosInstance } from "axios";
+import { CasPrediction } from "../../types";
 
 export class CasClient {
-  constructor(
-    private getAxios: () => AxiosInstance,
-    private getReady: () => Promise<void>,
-    private hasGrantedGlobalScope: (scope: string) => boolean
-  ) { }
+  private axios: AxiosInstance;
 
-  async predictCas({ tgUserId }: { tgUserId?: number }) {
-    await this.getReady()
-
-    const hasScope = this.hasGrantedGlobalScope('cas/predict')
-
-    if (!hasScope) {
-      console.error('Client cannot get prediction from cas model because it no\'t have cas/predict scope granted')
-
-      return null
-    }
-
-    const { data } = await this.getAxios().post<CasPrediction>(`/cas/predict`, { tgUserId })
-
-    return data
+  constructor(baseURL: string) {
+    this.axios = axios.create({ baseURL });
   }
 
-  async train({ tgUserId }: { tgUserId: number }) {
-    await this.getReady()
+  async isBanned(tgUserId: number) {
+    const { data } = await this.axios.get<CasPrediction>("/isBanned", {
+      params: {
+        tgUserId,
+      },
+    });
 
-    const hasScope = this.hasGrantedGlobalScope('cas/train')
+    return data;
+  }
 
-    if (!hasScope) {
-      console.error(
-        `Client cannot train cas model because it don\'t have cas/train scope granted`
-      )
+  async ban(tgUserId: number) {
+    const { data } = await this.axios.post<void>("/train", {
+      tgUserId,
+      banned: true,
+    });
 
-      return null
-    }
+    return data;
+  }
 
-    const { data } = await this.getAxios().post<void>(`/cas/train`, { tgUserId })
+  async protect(tgUserId: number) {
+    const { data } = await this.axios.post<void>("/train", {
+      tgUserId,
+      banned: false,
+    });
 
-    return data
+    return data;
   }
 }

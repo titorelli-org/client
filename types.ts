@@ -17,7 +17,7 @@ export type UnlabeledExample = {
 
 export type Prediction = {
   reason: ReasonTypes
-  value: Labels
+  label: Labels
   confidence: number
 }
 
