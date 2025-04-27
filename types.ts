@@ -1,6 +1,6 @@
 export type Labels = "spam" | "ham";
 
-export type CasReasons = "totem" | "lols" | "cas";
+export type CasReasons = "totem" | "lols" | "cas" | "chain" | "generic";
 
 export type PredictionReasons = "classifier" | "duplicate" | "totem" | "cas";
 
@@ -21,7 +21,7 @@ export type Prediction = {
 
 export type CasPrediction = {
   banned: boolean;
-  reason: PredictionReasons;
+  reason: CasReasons;
 };
 
 export type AuthenticationResult = {
