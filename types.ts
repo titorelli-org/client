@@ -1,32 +1,31 @@
-export type Labels = 'spam' | 'ham'
+export type Labels = "spam" | "ham";
 
-export type ReasonTypes =
-  | 'classifier'
-  | 'duplicate'
-  | 'totem'
-  | 'cas'
+export type CasReasons = "totem" | "lols" | "cas";
+
+export type PredictionReasons = "classifier" | "duplicate" | "totem" | "cas";
 
 export type LabeledExample = {
-  label: Labels
-  text: string
-}
+  label: Labels;
+  text: string;
+};
 
 export type UnlabeledExample = {
-  text: string
-}
+  text: string;
+};
 
 export type Prediction = {
-  reason: ReasonTypes
-  label: Labels
-  confidence: number
-}
+  reason: PredictionReasons;
+  label: Labels;
+  confidence: number;
+};
 
 export type CasPrediction = {
-  banned: boolean
-}
+  banned: boolean;
+  reason: PredictionReasons;
+};
 
 export type AuthenticationResult = {
-  access_token: string
-  token_type: string
-  scope: string
-}
+  access_token: string;
+  token_type: string;
+  scope: string;
+};
