@@ -78,11 +78,13 @@ export class BotsClient {
       bypassTelemetry,
       modelId,
       tgBotToken,
+      accessToken,
       state,
     }: {
       bypassTelemetry?: boolean;
       modelId?: number;
       tgBotToken?: string;
+      accessToken?: string;
       state?: "starting" | "stopping";
     },
   ) {
@@ -102,6 +104,7 @@ export class BotsClient {
       bypassTelemetry,
       modelId,
       tgBotToken,
+      accessToken,
       state,
     });
 
