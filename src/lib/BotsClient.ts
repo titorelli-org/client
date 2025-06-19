@@ -1,29 +1,32 @@
-import { AxiosInstance } from "axios";
+import axios from "axios";
+import type { AxiosInstance } from "axios";
+import { clientsStore } from "./clientsStore";
+import { oidcInterceptor } from "@titorelli-org/axios-oidc-interceptor";
+import { logger } from "./logger";
 
 export class BotsClient {
+  private axios: AxiosInstance;
+  private clientsStore = clientsStore;
+  private logger = logger;
+
   constructor(
-    private getAxios: () => AxiosInstance,
-    private getReady: () => Promise<void>,
-    private hasGrantedGlobalScope: (scope: string) => boolean,
-  ) {}
+    private readonly botsOrigin: string,
+    private readonly clientName: string,
+  ) {
+    this.axios = axios.create({ baseURL: this.botsOrigin });
+
+    oidcInterceptor(this.axios, {
+      client: { client_name: this.clientName },
+      clientRepository: this.clientsStore,
+      logger: this.logger,
+    });
+  }
 
   async list(
     accountId: number,
     { accessToken }: { accessToken?: string } = {},
   ) {
-    await this.getReady();
-
-    const hasScope = this.hasGrantedGlobalScope("bots/list");
-
-    if (!hasScope) {
-      console.error(
-        "Client cannot list bots because it no't have bots/list scope granted",
-      );
-
-      return null;
-    }
-
-    const { data } = await this.getAxios().get<unknown[]>("/bots", {
+    const { data } = await this.axios.get<unknown[]>("/bots", {
       params: { accountId, accessToken },
     });
 
@@ -47,19 +50,7 @@ export class BotsClient {
     tgBotToken: string;
     scopes: string;
   }) {
-    await this.getReady();
-
-    const hasScope = this.hasGrantedGlobalScope("bots/create");
-
-    if (!hasScope) {
-      console.error(
-        "Client cannot create bot because it no't have bots/create scope granted",
-      );
-
-      return null;
-    }
-
-    const { data } = await this.getAxios().post<void>("/bots", {
+    const { data } = await this.axios.post<void>("/bots", {
       id,
       accessToken,
       bypassTelemetry,
@@ -88,19 +79,7 @@ export class BotsClient {
       state?: "starting" | "stopping";
     },
   ) {
-    await this.getReady();
-
-    const hasScope = this.hasGrantedGlobalScope("bots/update");
-
-    if (!hasScope) {
-      console.error(
-        "Client cannot update bot because it no't have bots/update scope granted",
-      );
-
-      return null;
-    }
-
-    const { data } = await this.getAxios().post<void>(`/bots/${id}`, {
+    const { data } = await this.axios.post<void>(`/bots/${id}`, {
       bypassTelemetry,
       modelId,
       tgBotToken,
@@ -112,39 +91,21 @@ export class BotsClient {
   }
 
   async getState(id: number) {
-    await this.getReady();
+    type BotStates =
+      | "created"
+      | "starting"
+      | "running"
+      | "stopping"
+      | "stopped"
+      | "failed";
 
-    const hasScope = this.hasGrantedGlobalScope("bots/read");
-
-    if (!hasScope) {
-      console.error(
-        "Client cannot read bot's state because it no't have bots/read scope granted",
-      );
-
-      return null;
-    }
-
-    const { data } = await this.getAxios().get<
-      "created" | "starting" | "running" | "stopping" | "stopped" | "failed"
-    >(`/bots/${id}/state`);
+    const { data } = await this.axios.get<BotStates>(`/bots/${id}/state`);
 
     return data;
   }
 
   async remove(id: number) {
-    await this.getReady();
-
-    const hasScope = this.hasGrantedGlobalScope("bots/remove");
-
-    if (!hasScope) {
-      console.error(
-        "Client cannot remove bot because it no't have bots/remove scope granted",
-      );
-
-      return null;
-    }
-
-    const { data } = await this.getAxios().delete<void>(`/bots/${id}`);
+    const { data } = await this.axios.delete<void>(`/bots/${id}`);
 
     return data;
   }
