@@ -29,3 +29,9 @@ export type AuthenticationResult = {
   token_type: string;
   scope: string;
 };
+
+export type DiscoveryResult = {
+  apiOrigin: string;
+  casOrigin: string;
+  modelOrigin: string;
+};

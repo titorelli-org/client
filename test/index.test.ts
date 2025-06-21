@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import { createClient } from "../src";
+import { createClient, serviceDiscovery } from "../src";
 
 test("Model client", async (t) => {
   await t.test("predict", async () => {
@@ -58,5 +58,45 @@ test("Bots client", async (t) => {
     );
 
     assert.doesNotThrow(() => bots.list(1));
+  });
+});
+
+test("Discover client", async (t) => {
+  await t.test("by just domain name", async () => {
+    const { modelOrigin } = await serviceDiscovery("next.titorelli.ru");
+
+    assert.equal(modelOrigin, "https://model.api.next.titorelli.ru");
+  });
+
+  await t.test("by origin", async () => {
+    const { modelOrigin } = await serviceDiscovery("https://next.titorelli.ru");
+
+    assert.equal(modelOrigin, "https://model.api.next.titorelli.ru");
+  });
+
+  await t.test("by full address", async () => {
+    const { modelOrigin } = await serviceDiscovery(
+      "https://next.titorelli.ru/.well-known/appspecific/ru.titorelli.json",
+    );
+
+    assert.equal(modelOrigin, "https://model.api.next.titorelli.ru");
+  });
+
+  await t.test("by origin as URL", async () => {
+    const { modelOrigin } = await serviceDiscovery(
+      new URL("https://next.titorelli.ru"),
+    );
+
+    assert.equal(modelOrigin, "https://model.api.next.titorelli.ru");
+  });
+
+  await t.test("by full address as URL", async () => {
+    const { modelOrigin } = await serviceDiscovery(
+      new URL(
+        "https://next.titorelli.ru/.well-known/appspecific/ru.titorelli.json",
+      ),
+    );
+
+    assert.equal(modelOrigin, "https://model.api.next.titorelli.ru");
   });
 });

@@ -4,3 +4,4 @@ export * from "./ModelClient";
 export * from "./clientsStore";
 export * from "./logger";
 export * from "./createClient";
+export * from "./serviceDiscovery";
