@@ -3,17 +3,24 @@ import type { AxiosInstance } from "axios";
 import { clientsStore } from "./clientsStore";
 import { oidcInterceptor } from "@titorelli-org/axios-oidc-interceptor";
 import { logger } from "./logger";
+import { Logger } from "pino";
+import { requestLogger } from "./requestLogger";
 
 export class BotsClient {
-  private axios: AxiosInstance;
-  private clientsStore = clientsStore;
-  private logger = logger;
+  private readonly axios: AxiosInstance;
+  private readonly clientsStore = clientsStore;
+  private readonly logger = logger;
 
   constructor(
     private readonly botsOrigin: string,
     private readonly clientName: string,
+    logger?: Logger,
   ) {
     this.axios = axios.create({ baseURL: this.botsOrigin });
+
+    if (logger) {
+      requestLogger(this.axios, logger ?? this.logger);
+    }
 
     oidcInterceptor(this.axios, {
       client: { client_name: this.clientName },
