@@ -21,6 +21,5 @@ export const serviceDiscovery = async (
   const discoveryUrl = getDiscoveryUrl(paramsDiscoveryUrl);
 
   const resp = await fetch(discoveryUrl);
-
   return resp.json();
 };

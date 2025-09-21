@@ -6,25 +6,35 @@ import { logger } from "./logger";
 import { Logger } from "pino";
 import { requestLogger } from "./requestLogger";
 
+export type BotsClientConfig = {
+  baseUrl: string;
+  auth: {
+    clientName: string;
+    initialAccessToken: string;
+  };
+  logger?: Logger;
+};
+
 export class BotsClient {
   private readonly axios: AxiosInstance;
   private readonly clientsStore = clientsStore;
   private readonly logger = logger;
 
-  constructor(
-    private readonly botsOrigin: string,
-    private readonly clientName: string,
-    logger?: Logger,
-  ) {
-    this.axios = axios.create({ baseURL: this.botsOrigin });
+  constructor({
+    baseUrl,
+    auth: { clientName, initialAccessToken },
+    logger,
+  }: BotsClientConfig) {
+    this.axios = axios.create({ baseURL: baseUrl });
 
     if (logger) {
       requestLogger(this.axios, logger ?? this.logger);
     }
 
     oidcInterceptor(this.axios, {
-      client: { client_name: this.clientName },
+      client: { client_name: clientName },
       clientRepository: this.clientsStore,
+      initialAccessToken: initialAccessToken,
       logger: this.logger,
     });
   }

@@ -7,25 +7,35 @@ import { oidcInterceptor } from "@titorelli-org/axios-oidc-interceptor";
 import { Logger } from "pino";
 import { requestLogger } from "./requestLogger";
 
+export type CasClientConfig = {
+  baseUrl: string;
+  auth: {
+    clientName: string;
+    initialAccessToken: string;
+  };
+  logger?: Logger;
+};
+
 export class CasClient {
   private readonly axios: AxiosInstance;
   private readonly clientsStore = clientsStore;
   private readonly logger = logger;
 
-  constructor(
-    private readonly casOrigin: string,
-    private readonly clientName: string,
-    logger?: Logger,
-  ) {
-    this.axios = axios.create({ baseURL: this.casOrigin });
+  constructor({
+    baseUrl,
+    auth: { clientName, initialAccessToken },
+    logger,
+  }: CasClientConfig) {
+    this.axios = axios.create({ baseURL: baseUrl });
 
     if (logger) {
       requestLogger(this.axios, logger ?? this.logger);
     }
 
     oidcInterceptor(this.axios, {
-      client: { client_name: this.clientName },
+      client: { client_name: clientName },
       clientRepository: this.clientsStore,
+      initialAccessToken,
       logger: this.logger,
     });
   }

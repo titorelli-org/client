@@ -1,33 +1,33 @@
-import { BotsClient } from "./BotsClient";
-import { CasClient } from "./CasClient";
-import { ModelClient } from "./ModelClient";
+import { BotsClient, BotsClientConfig } from "./BotsClient";
+import { CasClient, CasClientConfig } from "./CasClient";
+import { ModelClient, ModelClientConfig } from "./ModelClient";
 
 export function createClient(
   type: "model",
-  ...args: ConstructorParameters<typeof ModelClient>
+  conf: ModelClientConfig,
 ): Promise<ModelClient>;
 
 export function createClient(
   type: "cas",
-  ...args: ConstructorParameters<typeof CasClient>
+  conf: CasClientConfig,
 ): Promise<CasClient>;
 
 export function createClient(
   type: "bots",
-  ...args: ConstructorParameters<typeof BotsClient>
+  conf: BotsClientConfig,
 ): Promise<BotsClient>;
 
 export async function createClient(
   type: "model" | "cas" | "bots",
-  ...args: [any, any]
+  conf: ModelClientConfig | CasClientConfig | BotsClientConfig,
 ) {
   switch (type) {
     case "model":
-      return new ModelClient(...args);
+      return new ModelClient(conf);
     case "cas":
-      return new CasClient(...args);
+      return new CasClient(conf);
     case "bots":
-      return new BotsClient(...args);
+      return new BotsClient(conf);
     default:
       throw new Error(`Unknown client type: ${type}`);
   }

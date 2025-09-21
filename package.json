@@ -18,16 +18,17 @@
   "author": "YChebotaev",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@titorelli-org/axios-oidc-interceptor": "^0.5.1",
-    "axios": "^1.6.1",
+    "@titorelli-org/axios-oidc-interceptor": "^0.6.0",
+    "axios": "^1.12.2",
     "axios-oauth-client": "^2.2.0",
-    "pino": "^9.7.0"
+    "pino": "^9.11.0"
   },
   "devDependencies": {
+    "npm-check-updates": "^18.3.0",
     "ts-node": "^10.9.2",
-    "tsup": "^8.3.5",
-    "tsx": "^4.20.3",
-    "typescript": "^5.7.2"
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "keywords": [
     "telegram",
